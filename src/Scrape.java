@@ -25,14 +25,14 @@ public class Scrape {
 
         scrape.displayOverallInfo();
 
-        /*System.out.println();
+        System.out.println();
         scrape.displayCountryWiseInfo();
 
         System.out.println();
         scrape.displayCanadaStats();
 
         System.out.println();
-        scrape.displayUnitedStatesStats();*/
+        scrape.displayUnitedStatesStats();
         scrape.displayIndiaStats();
 
     }
@@ -93,10 +93,10 @@ public class Scrape {
             }
 
             String province = elem.select("td:eq(0)").text();
-            String confirmedCases = elem.select("td:eq(2)").text();
-            String presumptiveCases = elem.select("td:eq(3)").text();
-            String deathCases = elem.select("td:eq(8)").text();
-            String recoveredCases = elem.select("td:eq(7)").text();
+            String confirmedCases = elem.select("td:eq(3)").text();
+            String presumptiveCases = elem.select("td:eq(4)").text();
+            String deathCases = elem.select("td:eq(9)").text();
+            String recoveredCases = elem.select("td:eq(8)").text();
 
             canada.setProvince(province);
             canada.setConfirmedCases(confirmedCases);
