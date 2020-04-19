@@ -15,6 +15,10 @@ public class Scrape {
     private Elements covidUnitedStatesElements;
     private Elements covidIndiaElements;
 
+    private Document covidUnitedStatesDoc;
+    private Document covidIndiaDoc;
+    private Document covidCanadaDoc;
+
     public static void main(String args[]) throws IOException {
 
         System.out.println("OM");
@@ -35,6 +39,17 @@ public class Scrape {
         scrape.displayUnitedStatesStats();
         scrape.displayIndiaStats();
 
+        System.out.println();
+        System.out.println("OverallCases For Usa");
+        scrape.displayUsaOverallCases();
+
+        System.out.println();
+        System.out.println("OverallCases For India");
+        scrape.displayIndiaOverallCases();
+
+        System.out.println();
+        System.out.println("OverallCases For Canada");
+        scrape.displayCanadaOverallCases();
     }
 
     private void displayOverallInfo() {
@@ -168,7 +183,7 @@ public class Scrape {
             indiaList.add(india);
         }
 
-        for(India india : indiaList) {
+        for (India india : indiaList) {
             System.out.println(india.getState() + "---" + india.getActiveCases() + "---" + india.getRecoveries());
         }
     }
@@ -176,9 +191,10 @@ public class Scrape {
     private void initializeJsoupItems() {
         try {
             Document covidDoc = Jsoup.connect(Constants.URL_WIKI).get();
-            Document covidCanadaDoc = Jsoup.connect(Constants.URL_CANADA).get();
-            Document covidUnitedStatesDoc = Jsoup.connect(Constants.URL_USA).get();
-            Document covidIndiaDoc = Jsoup.connect(Constants.URL_INDIA).get();
+            covidCanadaDoc = Jsoup.connect(Constants.URL_CANADA).get();
+            covidUnitedStatesDoc = Jsoup.connect(Constants.URL_USA).get();
+            covidIndiaDoc = Jsoup.connect(Constants.URL_INDIA).get();
+
             covidOverAllElements = covidDoc.select("table.wikitable.plainrowheaders.sortable tr th.covid-total-row");
             covidCountryElements = covidDoc.select("table.wikitable.plainrowheaders.sortable tbody tr").not("tr.sortbottom");
             covidCanadaElements = covidCanadaDoc.select("table.wikitable.sortable");
@@ -189,6 +205,44 @@ public class Scrape {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void displayUsaOverallCases() {
+
+        Element usOverallCases = covidUnitedStatesDoc.select("table.wikitable.plainrowheaders.sortable tbody tr").get(2);
+
+        String confirmedCases = usOverallCases.getElementsByTag("th").get(1).text();
+        String deathCases = usOverallCases.getElementsByTag("th").get(2).text();
+        String recoveredCases = usOverallCases.getElementsByTag("th").get(3).text();
+
+        System.out.println("Confirmed Cases: " + confirmedCases);
+        System.out.println("Recovered Cases: " + recoveredCases);
+        System.out.println("Fatal Cases: " + deathCases);
+
+    }
+
+    private void displayIndiaOverallCases() {
+        Element indiaOverallCases = covidIndiaDoc.select("table.wikitable.plainrowheaders.sortable.mw-collapsible tbody tr.sortBottom").get(0);
+
+
+        String confirmedCases = indiaOverallCases.getElementsByTag("th").get(3).text();
+        String recoveredCases = indiaOverallCases.getElementsByTag("th").get(3).text();
+        String deathCases = indiaOverallCases.getElementsByTag("th").get(2).text();
+
+        System.out.println("Confirmed Cases: " + confirmedCases);
+        System.out.println("Recovered Cases: " + recoveredCases);
+        System.out.println("Fatal Cases: " + deathCases);
+    }
+
+    private void displayCanadaOverallCases() {
+        Element canadaOverallCases = covidCanadaDoc.select("table.wikitable.sortable tbody tr").last();
+        String confirmedCases = canadaOverallCases.getElementsByTag("th").get(4).text();
+        String recoveredCases = canadaOverallCases.getElementsByTag("th").get(8).text();
+        String deathCases = canadaOverallCases.getElementsByTag("th").get(9).text();
+
+        System.out.println("Confirmed Cases: " + confirmedCases);
+        System.out.println("Recovered Cases: " + recoveredCases);
+        System.out.println("Fatal Cases: " + deathCases);
     }
 }
 
