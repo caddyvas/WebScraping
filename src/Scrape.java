@@ -15,41 +15,11 @@ public class Scrape {
     private Elements covidUnitedStatesElements;
     private Elements covidIndiaElements;
 
-    private Document covidUnitedStatesDoc;
-    private Document covidIndiaDoc;
-    private Document covidCanadaDoc;
+    public static void main(String args[]) {
 
-    public static void main(String args[]) throws IOException {
-
-        System.out.println("OM");
         Scrape scrape = new Scrape();
         scrape.initializeJsoupItems();
-
-        // From WIKI
-
-        scrape.displayOverallInfo();
-
-        System.out.println();
-        scrape.displayCountryWiseInfo();
-
-        System.out.println();
-        scrape.displayCanadaStats();
-
-        System.out.println();
-        scrape.displayUnitedStatesStats();
-        scrape.displayIndiaStats();
-
-        System.out.println();
-        System.out.println("OverallCases For Usa");
-        scrape.displayUsaOverallCases();
-
-        System.out.println();
-        System.out.println("OverallCases For India");
-        scrape.displayIndiaOverallCases();
-
-        System.out.println();
-        System.out.println("OverallCases For Canada");
-        scrape.displayCanadaOverallCases();
+        scrape.displayAllInformation(scrape);
     }
 
     private void displayOverallInfo() {
@@ -95,10 +65,10 @@ public class Scrape {
     private void displayCanadaStats() {
 
         if (covidCanadaElements.size() > 1)
-            covidCanadaElements.remove(0);
+            covidCanadaElements.remove(1);
 
         List<Canada> canadaList = new ArrayList<>();
-        Elements ele = covidCanadaElements.select("tbody tr");
+        Elements ele = covidCanadaElements.select("tbody tr").not("tr:eq(0)").not("tr:eq(1)");
         for (Element element : ele) {
 
             Canada canada = new Canada();
@@ -108,10 +78,10 @@ public class Scrape {
             }
 
             String province = elem.select("td:eq(0)").text();
-            String confirmedCases = elem.select("td:eq(3)").text();
-            String presumptiveCases = elem.select("td:eq(4)").text();
-            String deathCases = elem.select("td:eq(9)").text();
-            String recoveredCases = elem.select("td:eq(8)").text();
+            String confirmedCases = elem.select("td:eq(4)").text();
+            String presumptiveCases = elem.select("td:eq(5)").text();
+            String deathCases = elem.select("td:eq(6)").text();
+            String recoveredCases = elem.select("td:eq(7)").text();
 
             canada.setProvince(province);
             canada.setConfirmedCases(confirmedCases);
@@ -191,11 +161,11 @@ public class Scrape {
     private void initializeJsoupItems() {
         try {
             Document covidDoc = Jsoup.connect(Constants.URL_WIKI).get();
-            covidCanadaDoc = Jsoup.connect(Constants.URL_CANADA).get();
-            covidUnitedStatesDoc = Jsoup.connect(Constants.URL_USA).get();
-            covidIndiaDoc = Jsoup.connect(Constants.URL_INDIA).get();
+            Document covidCanadaDoc = Jsoup.connect(Constants.URL_CANADA).get();
+            Document covidUnitedStatesDoc = Jsoup.connect(Constants.URL_USA).get();
+            Document covidIndiaDoc = Jsoup.connect(Constants.URL_INDIA).get();
 
-            covidOverAllElements = covidDoc.select("table.wikitable.plainrowheaders.sortable tr th.covid-total-row");
+            covidOverAllElements = covidDoc.select("table.wikitable.plainrowheaders.sortable tbody tr.sorttop th");
             covidCountryElements = covidDoc.select("table.wikitable.plainrowheaders.sortable tbody tr").not("tr.sortbottom");
             covidCanadaElements = covidCanadaDoc.select("table.wikitable.sortable");
             covidUnitedStatesElements = covidUnitedStatesDoc.select("table.wikitable.plainrowheaders.sortable tbody tr").
@@ -207,42 +177,19 @@ public class Scrape {
         }
     }
 
-    private void displayUsaOverallCases() {
+    private void displayAllInformation(Scrape scrape) {
 
-        Element usOverallCases = covidUnitedStatesDoc.select("table.wikitable.plainrowheaders.sortable tbody tr").get(2);
+        scrape.displayOverallInfo();
 
-        String confirmedCases = usOverallCases.getElementsByTag("th").get(1).text();
-        String deathCases = usOverallCases.getElementsByTag("th").get(2).text();
-        String recoveredCases = usOverallCases.getElementsByTag("th").get(3).text();
+        System.out.println();
+        scrape.displayCountryWiseInfo();
 
-        System.out.println("Confirmed Cases: " + confirmedCases);
-        System.out.println("Recovered Cases: " + recoveredCases);
-        System.out.println("Fatal Cases: " + deathCases);
+        System.out.println();
+        scrape.displayCanadaStats();
 
-    }
-
-    private void displayIndiaOverallCases() {
-        Element indiaOverallCases = covidIndiaDoc.select("table.wikitable.plainrowheaders.sortable.mw-collapsible tbody tr.sortBottom").get(0);
-
-
-        String confirmedCases = indiaOverallCases.getElementsByTag("th").get(3).text();
-        String recoveredCases = indiaOverallCases.getElementsByTag("th").get(3).text();
-        String deathCases = indiaOverallCases.getElementsByTag("th").get(2).text();
-
-        System.out.println("Confirmed Cases: " + confirmedCases);
-        System.out.println("Recovered Cases: " + recoveredCases);
-        System.out.println("Fatal Cases: " + deathCases);
-    }
-
-    private void displayCanadaOverallCases() {
-        Element canadaOverallCases = covidCanadaDoc.select("table.wikitable.sortable tbody tr").last();
-        String confirmedCases = canadaOverallCases.getElementsByTag("th").get(4).text();
-        String recoveredCases = canadaOverallCases.getElementsByTag("th").get(8).text();
-        String deathCases = canadaOverallCases.getElementsByTag("th").get(9).text();
-
-        System.out.println("Confirmed Cases: " + confirmedCases);
-        System.out.println("Recovered Cases: " + recoveredCases);
-        System.out.println("Fatal Cases: " + deathCases);
+        System.out.println();
+        scrape.displayUnitedStatesStats();
+        scrape.displayIndiaStats();
     }
 }
 
