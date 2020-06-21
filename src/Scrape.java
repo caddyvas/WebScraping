@@ -25,9 +25,9 @@ public class Scrape {
     private void displayOverallInfo() {
 
         // Display Overall cases
-        System.out.println("Total Number of Confirmed Cases: " + covidOverAllElements.get(1).text());
-        System.out.println("Total Number of Deaths: " + covidOverAllElements.get(2).text());
-        System.out.println("Total Number of Recovered Cases: " + covidOverAllElements.get(3).text());
+        System.out.println("Total Number of Confirmed Cases: " + covidOverAllElements.get(2).text());
+        System.out.println("Total Number of Deaths: " + covidOverAllElements.get(3).text());
+        System.out.println("Total Number of Recovered Cases: " + covidOverAllElements.get(4).text());
 
     }
 
@@ -134,11 +134,8 @@ public class Scrape {
 
     private void displayIndiaStats() {
         List<India> indiaList = new ArrayList<>();
-        for (Element element : covidIndiaElements) {
-
-            if (element.text().isEmpty()) {
-                continue;
-            }
+        for (int i = 0; i < 36; i++) {
+            Element element = covidIndiaElements.get(i);
             India india = new India();
             String state = element.select("th[scope]").text();
             String activeCases = element.getElementsByTag("td").get(0).text();
@@ -170,8 +167,8 @@ public class Scrape {
             covidCanadaElements = covidCanadaDoc.select("table.wikitable.sortable");
             covidUnitedStatesElements = covidUnitedStatesDoc.select("table.wikitable.plainrowheaders.sortable tbody tr").
                     not("tr.sortbottom").not("tr:eq(0)").not("tr:eq(1)").not("tr:eq(2)");
-            covidIndiaElements = covidIndiaDoc.select("table.wikitable.plainrowheaders.sortable.mw-collapsible tbody tr").
-                    not("tr.sortbottom").not("tr:eq(0)").not("tr:eq(1)");
+            covidIndiaElements = covidIndiaDoc.select("table.wikitable.plainrowheaders.sortable tbody tr").
+                    not("tr.sortbottom").not("tr.sorttop").not("tr:eq(0)").not("tr:eq(1)");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -189,6 +186,7 @@ public class Scrape {
 
         System.out.println();
         scrape.displayUnitedStatesStats();
+        System.out.println();
         scrape.displayIndiaStats();
     }
 }
